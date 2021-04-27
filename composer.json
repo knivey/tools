@@ -3,6 +3,7 @@
   "description": "Various php functions that have made life easier",
   "minimum-stability": "stable",
   "license": "MIT",
+  "version": "1.0",
   "authors": [
     {
       "name": "knivey",
