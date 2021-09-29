@@ -61,6 +61,8 @@ function str2int($s) {
  * @return string
  */
 function convert($size) {
+    //using float because it can hold big numbers even tho it doesnt make sense for byte values to have decimal
+    $size = (float)$size;
     if($size == 0)
         return "{$size}b";
     $neg = '';
