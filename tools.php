@@ -61,8 +61,15 @@ function str2int($s) {
  * @return string
  */
 function convert($size) {
+    if($size == 0)
+        return "{$size}b";
+    $neg = '';
+    if($size < 0) {
+        $neg = '-';
+        $size = abs($size);
+    }
     $unit=array('b','kb','mb','gb','tb','pb');
-    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).$unit[$i];
+    return $neg.@round($size/pow(1024,($i=floor(log($size,1024)))),2).$unit[$i];
 }
 
 /**
