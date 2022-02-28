@@ -264,3 +264,46 @@ function makeArgs($string) {
     return $args;
 }
 
+/**
+ * Escapes \ and \0 $1 etc... back references where needed (i hope)
+ */
+function escapeRegexReplace(string $str) {
+    $out = '';
+    $str = \mb_str_split($str);
+    if(empty($str))
+        return "";
+    for($i = 0; $i < count($str); $i++) {
+        if($str[$i] == '\\' && isset($str[$i+1])) {
+            if($str[$i+1] == '\\') {
+                $out .= '\\';
+            }
+            if(\ctype_digit($str[$i+1])) {
+                $out .= '\\';
+            }
+        }
+        if($str[$i] == '$' && isset($str[$i+1])) {
+            if(\ctype_digit($str[$i+1])) {
+                $out .= '\\';
+            }
+        }
+        $out .= $str[$i];
+    }
+    return $out;
+}
+
+function globToRegex($glob, $delimiter = '/') {
+    $out = '';
+    $i = 0;
+    while($i < strlen($glob)) {
+        $nextc = strcspn($glob, '*?', $i);
+        $out .= preg_quote(substr($glob, $i, $nextc), $delimiter);
+        if($nextc + $i == strlen($glob))
+            break;
+        if($glob[$nextc + $i] == '?')
+            $out .= '.';
+        if($glob[$nextc + $i] == '*')
+            $out .= '.*';
+        $i += $nextc + 1;
+    }
+    return "${delimiter}{$out}${delimiter}";
+}
