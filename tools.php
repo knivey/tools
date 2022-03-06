@@ -291,7 +291,14 @@ function escapeRegexReplace(string $str) {
     return $out;
 }
 
-function globToRegex($glob, $delimiter = '/') {
+/**
+ * Converts a glob to a regular expression (including delimiter)
+ * you may want to append flags to the end of returned regex like i for case-insensitive
+ * @param string $glob
+ * @param string $delimiter
+ * @return string
+ */
+function globToRegex(string $glob, string $delimiter = '/'): string {
     $out = '';
     $i = 0;
     while($i < strlen($glob)) {
