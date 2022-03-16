@@ -296,9 +296,10 @@ function escapeRegexReplace(string $str) {
  * you may want to append flags to the end of returned regex like i for case-insensitive
  * @param string $glob
  * @param string $delimiter
+ * @param bool $anchor If true will add ^ and $ for start/end
  * @return string
  */
-function globToRegex(string $glob, string $delimiter = '/'): string {
+function globToRegex(string $glob, string $delimiter = '/', bool $anchor = true): string {
     $out = '';
     $i = 0;
     while($i < strlen($glob)) {
@@ -312,5 +313,7 @@ function globToRegex(string $glob, string $delimiter = '/'): string {
             $out .= '.*';
         $i += $nextc + 1;
     }
+    if($anchor)
+        return "${delimiter}^{$out}\$${delimiter}";
     return "${delimiter}{$out}${delimiter}";
 }
