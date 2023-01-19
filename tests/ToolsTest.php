@@ -35,4 +35,31 @@ final class ToolsTest extends TestCase
     {
         $this->assertSame($expected, knivey\tools\escapeRegexReplace($input));
     }
+
+    public function globToRegexProvider()
+    {
+        return
+            [
+                ["arst", "/^arst$/"],
+                ["ar*st", "/^ar.*st$/"],
+                ["*ar*st", "/^.*ar.*st$/"],
+                ["ar.st", "/^ar\\.st$/"],
+                ["ar\\st?1", "/^ar\\\\st.1$/"],
+                ["ar\\s/t?1", "/^ar\\\\s\\/t.1$/"],
+            ];
+    }
+
+    /**
+     * @dataProvider globToRegexProvider
+     */
+    public function testGlobToRegex($input, $expected): void
+    {
+        $this->assertSame($expected, knivey\tools\globToRegex($input));
+    }
+
+    public function testGlobToRegexDelimiterAndAnchor(): void
+    {
+        $this->assertSame("/ar.*s\\/t/", knivey\tools\globToRegex("ar*s/t", anchor: false));
+        $this->assertSame("@ar.*s/t@", knivey\tools\globToRegex("ar*s/t", delimiter: "@", anchor: false));
+    }
 }
