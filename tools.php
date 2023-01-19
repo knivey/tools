@@ -239,8 +239,6 @@ function makeArgs(string $string): array|int
                     return $pos + 1; // Error at pos
                 }
                 $inQuote = true;
-                $lastChar = $c;
-                continue;
             } else {
                 if (isset($string[$pos + 1]) && $string[$pos + 1] != ' ') {
                     //only end or space should follow end quote
@@ -252,9 +250,9 @@ function makeArgs(string $string): array|int
                 $Bskip = true; //skip next space
                 $inQuote = false;
                 $curArg++;
-                $lastChar = $c;
-                continue;
             }
+            $lastChar = $c;
+            continue;
         }
         if (!$inQuote && $c == ' ') {
             if ($lastChar != ' ') {
