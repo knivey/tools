@@ -12,10 +12,12 @@
   ],
   "require": {
     "php": ">=8",
-    "ext-mbstring": "*",
-    "ext-ctype": "*"
+    "ext-mbstring": "*"
   },
   "autoload": {
     "files": [ "tools.php" ]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
   }
 }

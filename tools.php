@@ -50,17 +50,17 @@ function dirtree(string $dir, string $extension = "txt"): array {
  * @param string $s
  * @return number
  */
-function str2int($s) {
+function str2int(string $s): int {
     $hex = hexdump($s);
     return (int)hexdec($hex);
 }
 
 /**
- * Turn Bytes size into human readable format
- * @param int $size
+ * Turn Bytes size into human-readable format
+ * @param int|float $size
  * @return string
  */
-function convert($size) {
+function convert(int|float $size): string {
     //using float because it can hold big numbers even tho it doesnt make sense for byte values to have decimal
     $size = (float)$size;
     if($size == 0)
@@ -79,11 +79,10 @@ function convert($size) {
  * @param string $s
  * @return string
  */
-function revbo($s) {
+function revbo(string $s): string {
     $s = str_split($s);
     $s = array_reverse($s);
-    $s = implode('', $s);
-    return $s;
+    return implode('', $s);
 }
 
 /**
@@ -91,7 +90,7 @@ function revbo($s) {
  * @param string $s
  * @return string
  */
-function hexdump($s) {
+function hexdump(string $s): string {
     $s = str_split($s);
     $out = '';
     foreach($s as $c) {
@@ -106,21 +105,19 @@ function hexdump($s) {
 }
 
 /**
- * Searches $ar until it finds case insensitive match for $key
+ * Searches $ar until it finds case-insensitive match for $key
  * and returns it, or NULL on fail.
  * @param mixed $key
- * @param Array $ar
+ * @param array $ar
  * @return mixed
  */
-function get_akey_nc($key, $ar) {
-    if(is_array($ar)) {
-        $keys = array_keys($ar);
-        foreach($keys as &$k) {
-            if(strtolower($key) == strtolower($k))
-                return $k;
-        }
+function get_akey_nc($key, array $ar) {
+    $keys = array_keys($ar);
+    foreach($keys as &$k) {
+        if(strtolower($key) == strtolower($k))
+            return $k;
     }
-    return NULL;
+    return null;
 }
 
 /**
@@ -129,7 +126,7 @@ function get_akey_nc($key, $ar) {
  * @param array $array
  * @return array
  */
-function array_padding($array) {
+function array_padding(array $array): array {
     $pad = 0;
     for ($i = 0; $i < count($array); $i++) {
         if (strlen($array[$i]) - substr_count($array[$i], "\2") > $pad) {
@@ -150,9 +147,8 @@ function array_padding($array) {
  * @param array $array
  * @return array
  */
-function multi_array_padding($array) {
+function multi_array_padding(array $array): array {
     //First dimension is rows second is cols
-    $c = 0;$r = 0;
     $col = Array();
     $cols = count($array[0]);
     $rows = count($array);
@@ -174,7 +170,7 @@ function multi_array_padding($array) {
  * @return float
  * @codeCoverageIgnore
  */
-function microtime_float()
+function microtime_float(): float
 {
     list($usec, $sec) = explode(" ", microtime());
     return ((float)$usec + (float)$sec);
@@ -187,7 +183,7 @@ function microtime_float()
  * @param string $string
  * @return array|int
  */
-function makeArgs($string) {
+function makeArgs(string $string): array|int {
     /* 7/3/09 - Finished
      * take $string  and make args split by
      * spaces but including " support and \ support
@@ -264,25 +260,32 @@ function makeArgs($string) {
     return $args;
 }
 
+function isDigit(string $str): bool {
+    if($str == "")
+        return false;
+    foreach (mb_str_split($str) as $c) {
+        if (strlen($c) > 1)
+            return false;
+        if(ord($c) < 48 || ord($c) > 57) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
- * Escapes \ and \0 $1 etc... back references where needed (i hope)
+ * Escapes what could be used as back references \ \0 $1 etc...
+ * useful for doing preg_replace but not wanting any back references
  */
-function escapeRegexReplace(string $str) {
+function escapeRegexReplace(string $str): string {
     $out = '';
     $str = \mb_str_split($str);
-    if(empty($str))
-        return "";
     for($i = 0; $i < count($str); $i++) {
-        if($str[$i] == '\\' && isset($str[$i+1])) {
+        if(($str[$i] == '\\' || $str[$i] == '$') && isset($str[$i+1])) {
             if($str[$i+1] == '\\') {
                 $out .= '\\';
             }
-            if(\ctype_digit($str[$i+1])) {
-                $out .= '\\';
-            }
-        }
-        if($str[$i] == '$' && isset($str[$i+1])) {
-            if(\ctype_digit($str[$i+1])) {
+            if(isDigit($str[$i+1])) {
                 $out .= '\\';
             }
         }
@@ -314,6 +317,6 @@ function globToRegex(string $glob, string $delimiter = '/', bool $anchor = true)
         $i += $nextc + 1;
     }
     if($anchor)
-        return "${delimiter}^{$out}\$${delimiter}";
-    return "${delimiter}{$out}${delimiter}";
+        return "{$delimiter}^{$out}\${$delimiter}";
+    return "{$delimiter}{$out}{$delimiter}";
 }
